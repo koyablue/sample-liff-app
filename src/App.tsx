@@ -5,20 +5,40 @@ import "./App.css";
 function App() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
 
   useEffect(() => {
-    liff
-      .init({
-        liffId: import.meta.env.VITE_LIFF_ID,
-      })
-      .then(() => {
+    // liff
+    //   .init({
+    //     liffId: import.meta.env.VITE_LIFF_ID,
+    //     withLoginOnExternalBrowser: true,
+    //   })
+    //   .then(() => {
+    //     setMessage("LIFF init succeeded.");
+    //     console.log("isLoggedIn:", liff.isLoggedIn());
+    //   })
+    //   .catch((e: Error) => {
+    //     setMessage("LIFF init failed.");
+    //     setError(`${e}`);
+    //   });
+    const initializeLiff = async () => {
+      try {
+        await liff.init({
+          liffId: import.meta.env.VITE_LIFF_ID,
+          withLoginOnExternalBrowser: true,
+        });
         setMessage("LIFF init succeeded.");
-      })
-      .catch((e: Error) => {
+        console.log("isLoggedIn:", liff.isLoggedIn());
+        const prof = await liff.getProfile();
+        setName(prof.displayName);
+      } catch (e: any) {
         setMessage("LIFF init failed.");
         setError(`${e}`);
-      });
-  });
+      }
+    };
+
+    initializeLiff();
+  }, []);
 
   return (
     <div className="App">
@@ -36,6 +56,7 @@ function App() {
       >
         LIFF Documentation
       </a>
+      {`Hello ${name}`}
     </div>
   );
 }
